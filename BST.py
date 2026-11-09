@@ -1,4 +1,4 @@
-nums = [1, 8, 4, 2, 9, 3, 7, 5, 6]
+nums = [1, 8, 4, 12, 9, 3, 7, 5, 6, 10]
 
 
 #класс узла/вершины дерева
@@ -8,6 +8,60 @@ class TreeNode:
         self.left = left
         self.right = right
 
+    def search(self, target):
+        node = self
+        while node:
+            if target == node.val:
+                return node
+            node = node.left if target < node.val else node.right
+        return None
+
+    def contains(self, target):
+        return self.search(target) is not None
+
+    def insert(self, val):
+        if val < self.val:
+            if self.left is None:
+                self.left = TreeNode(val)
+            else:
+                self.left.insert(val)
+        elif val > self.val:
+            if self.right is None:
+                self.right = TreeNode(val)
+            else: self.right.insert(val)
+        return self
+
+    def delete(self, val):
+        if val < self.val:
+            if self.left:
+                self.left = self.left.delete(val)
+        elif val > self.val:
+            if self.right:
+                self.right = self.right.delete(val)
+
+        else:
+            if self.left is None:
+                return self.right
+            if self.right is None:
+                return self.left
+            #Если есть 2 узла-ребёнка
+            succesor = self.right._min_node()
+            self.val = succesor.val
+            self.right = self.right.delete(succesor.val)
+
+        return self
+
+    def _min_node(self):
+        node = self
+        while node.left:
+            node = node.left
+        return node
+
+    def _max_node(self):
+        node = self
+        while node.right:
+            node = node.right
+        return node
 
 #Функция представления отсортированного массива в виде бинарного(не самобалансируюещегося) дерева поиска
 def sortedArrayToBST(nums):
@@ -91,3 +145,8 @@ def print_tree(node, prefix="", is_tail=True):
         print_tree(node.left, prefix + ("    " if is_tail else "│   "), True)
 
 print_tree(BST)
+
+#Проверка поиска, вставки и удаления
+print(BST.contains(7))
+print_tree(BST.insert(2))
+print_tree(BST.delete(6))
